@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, request, url_for
 
 from flask_sqlalchemy import SQLAlchemy
 
-from flask_login import login_user, logout_user, login_required, LoginManager, UserMixin
+from flask_login import login_user, logout_user, current_user, login_required, LoginManager, UserMixin
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -11,8 +11,8 @@ app.config["DEBUG"] = True
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///comments.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
 db = SQLAlchemy(app)
+
 app.secret_key = "naifbtrmidmrghhdemorddcynsurrattueraargwaeha"
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -41,15 +41,18 @@ all_users = {
 def load_user(user_id):
     return all_users.get(user_id)
 
-comments = []
+comment = []
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    if request.method == "GET":
-        return render_template("main_page.html", comments=comments)
+    if request.method == "POST":
+        if not current_user.is_authenticated:
+            return redirect(url_for('index'))
 
-    comments.append(request.form["contents"])
-    return redirect(url_for('index'))
+        comment.append(request.form["contents"])
+        return redirect(url_for('index'))
+
+    return render_template("main_page.html", comments=comment)
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
@@ -65,10 +68,10 @@ def login():
         return render_template("login_page.html", error=True)
 
     login_user(user)
+    return redirect(url_for('index'))
 
 @app.route("/logout/")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
     return redirect(url_for('index'))
