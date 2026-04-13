@@ -1,3 +1,5 @@
 *.pyc
 __pycache__
 instance/
+instance/comments.db
+*.db

@@ -17,17 +17,17 @@ app.secret_key = "naifbtrmidmrghhdemorddcynsurrattueraargwaeha"
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-class User(UserMixin):
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(4096))
 
+class User(UserMixin):
     def __init__(self, username, password_hash):
         self.username = username
         self.password_hash = password_hash
-
-
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-
     def get_id(self):
         return self.username
 
@@ -41,32 +41,30 @@ all_users = {
 def load_user(user_id):
     return all_users.get(user_id)
 
-comment = []
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         if not current_user.is_authenticated:
             return redirect(url_for('index'))
 
-        comment.append(request.form["contents"])
+        comment = Comment(content=request.form["contents"])
+        db.session.add(comment)
+        db.session.commit()
         return redirect(url_for('index'))
 
-    return render_template("main_page.html", comments=comment)
+    comments = Comment.query.all()
+    return render_template("main_page.html", comments=comments)
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template("login_page.html", error=False)
-
     username = request.form["username"]
     if username not in all_users:
         return render_template("login_page.html", error=True)
     user = all_users[username]
-
     if not user.check_password(request.form["password"]):
         return render_template("login_page.html", error=True)
-
     login_user(user)
     return redirect(url_for('index'))
 
