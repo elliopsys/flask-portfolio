@@ -1,75 +1,85 @@
 from flask import Flask, redirect, render_template, request, url_for
-
+from flask_login import current_user, login_required, login_user, LoginManager, UserMixin, logout_user
 from flask_sqlalchemy import SQLAlchemy
-
-from flask_login import login_user, logout_user, current_user, login_required, LoginManager, UserMixin
-
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///comments.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
+# Database config — uses SQLite for local/container use
+SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/comments.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
+app.config["SECRET_KEY"] = "change-this-secret-key-in-production"
 
-app.secret_key = "naifbtrmidmrghhdemorddcynsurrattueraargwaeha"
+db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+
+class User(UserMixin, db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(128))
+    password_hash = db.Column(db.String(128))
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def get_id(self):
+        return str(self.id)
+
 
 class Comment(db.Model):
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(4096))
 
-class User(UserMixin):
-    def __init__(self, username, password_hash):
-        self.username = username
-        self.password_hash = password_hash
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-    def get_id(self):
-        return self.username
-
-all_users = {
-    "admin": User("admin", generate_password_hash("secret")),
-    "bob": User("bob", generate_password_hash("less-secret")),
-    "caroline": User("caroline", generate_password_hash("completely-secret")),
-}
 
 @login_manager.user_loader
 def load_user(user_id):
-    return all_users.get(user_id)
+    return User.query.filter_by(id=int(user_id)).first()
 
-@app.route("/", methods=["GET", "POST"])
+
+@app.route("/")
 def index():
-    if request.method == "POST":
-        if not current_user.is_authenticated:
-            return redirect(url_for('index'))
+    return render_template("about.html")
 
-        comment = Comment(content=request.form["contents"])
-        db.session.add(comment)
-        db.session.commit()
-        return redirect(url_for('index'))
-
-    comments = Comment.query.all()
-    return render_template("main_page.html", comments=comments)
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template("login_page.html", error=False)
-    username = request.form["username"]
-    if username not in all_users:
+    user = User.query.filter_by(username=request.form["username"]).first()
+    if user is None:
         return render_template("login_page.html", error=True)
-    user = all_users[username]
     if not user.check_password(request.form["password"]):
         return render_template("login_page.html", error=True)
     login_user(user)
-    return redirect(url_for('index'))
+    return redirect(url_for("index"))
+
 
 @app.route("/logout/")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for("index"))
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+@app.route("/health")
+def health():
+    return {"status": "healthy"}, 200
+
+
+# Initialise DB tables on startup
+with app.app_context():
+    db.create_all()
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

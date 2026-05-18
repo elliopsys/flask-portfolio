@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elli — DevOps Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal-light:   #E1F5EE;
+      --teal-mid:     #5DCAA5;
+      --teal-strong:  #0F6E56;
+      --teal-dark:    #085041;
+      --text-primary: #1a1a18;
+      --text-muted:   #5f5e5a;
+      --text-hint:    #888780;
+      --border:       rgba(0,0,0,0.10);
+      --bg:           #ffffff;
+      --bg-surface:   #f8f7f4;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-links a.active { color: var(--teal-strong); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 4rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-hint);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 52px;
+      font-weight: 400;
+      line-height: 1.08;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--teal-strong);
+    }
+
+    .hero-bio {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin-bottom: 2.25rem;
+    }
+
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      cursor: pointer;
+    }
+
+    .pill:hover {
+      border-color: var(--text-hint);
+      color: var(--text-primary);
+    }
+
+    .pill-primary {
+      background: var(--teal-light);
+      border-color: var(--teal-mid);
+      color: var(--teal-dark);
+    }
+
+    .pill-primary:hover {
+      background: #9FE1CB;
+      border-color: var(--teal-strong);
+      color: var(--teal-dark);
+    }
+
+    .pill svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* ── Content sections ── */
+    .section {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 2.5rem;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-hint);
+      padding-top: 4px;
+    }
+
+    .section-body {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .section-body p + p { margin-top: 0.85rem; }
+
+    /* ── Skills ── */
+    .skill-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .tag {
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+    }
+
+    .tag-hi {
+      background: var(--teal-light);
+      border-color: var(--teal-mid);
+      color: var(--teal-dark);
+    }
+
+    /* ── Project cards ── */
+    .project-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 0.75rem;
+      transition: border-color 0.15s;
+    }
+
+    .project-card:last-child { margin-bottom: 0; }
+    .project-card:hover { border-color: var(--text-hint); }
+
+    .project-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 0.4rem;
+    }
+
+    .project-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .project-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: var(--teal-light);
+      border: 1px solid var(--teal-mid);
+      color: var(--teal-dark);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .project-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ── Footer ── */
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.75rem 0 2.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .footer-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--text-hint);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 560px) {
+      .hero-name { font-size: 36px; }
+      .section { grid-template-columns: 1fr; gap: 0.75rem; }
+      .section-label { padding-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <nav>
+      <a class="nav-logo" href="/">elli</a>
+      <ul class="nav-links">
+        <li><a href="/" class="active">about</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero">
+      <p class="hero-label">DevOps engineer &amp; operations leader</p>
+      <h1 class="hero-name">Hi, I'm <em>Elli.</em></h1>
+      <p class="hero-bio">
+        I bring 10+ years of operations and content leadership into cloud,
+        automation and DevOps delivery. I build the systems that keep software
+        running — and the pipelines that make shipping it effortless.
+      </p>
+
+      <div class="hero-links">
+
+        <!-- GitHub — real URL -->
+        <a class="pill pill-primary" href="https://github.com/elliopsys" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub
+        </a>
+
+        <!-- ✏️  REPLACE the # below with your LinkedIn profile URL -->
+        <!-- Example: https://www.linkedin.com/in/your-name -->
+        <a class="pill" href="https://www.linkedin.com/in/elliyani/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+
+        <!-- ✏️  REPLACE the # below with your personal website URL -->
+        <!-- Example: https://www.elli.dev -->
+        <a class="pill" href="http://www.elliyani.com" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Website
+        </a>
+
+        <!-- ✏️  REPLACE the # below with your email address -->
+        <!-- Example: mailto:hello@elli.dev -->
+        <a class="pill" href="mailto:elliyani.mohamad@gmail.com">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Contact
+        </a>
+
+      </div>
+    </section>
+
+    <!-- About -->
+    <div class="section">
+      <span class="section-label">About</span>
+      <div class="section-body">
+        <p>I started in operations and content — building teams, managing delivery,
+        and keeping complex projects on track. Over time I found myself drawn to
+        the infrastructure underneath it all: how systems are built, how deployments
+        happen, and how to make all of it faster and more reliable.</p>
+        <p>That background gives me something most DevOps engineers don't have:
+        I understand the human side of shipping software, not just the technical side.</p>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="section">
+      <span class="section-label">Skills</span>
+      <div class="section-body">
+        <div class="skill-grid">
+          <span class="tag tag-hi">CI/CD pipelines</span>
+          <span class="tag tag-hi">Docker</span>
+          <span class="tag tag-hi">Kubernetes</span>
+          <span class="tag tag-hi">Azure DevOps</span>
+          <span class="tag tag-hi">Python / Flask</span>
+          <span class="tag tag-hi">Cloud infrastructure</span>
+          <span class="tag tag-hi">Git</span>
+          <span class="tag tag-hi">Operations leadership</span>
+          <span class="tag tag-hi">Content strategy</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects -->
+    <div class="section">
+      <span class="section-label">Projects</span>
+      <div class="section-body">
+
+        <div class="project-card">
+          <div class="project-top">
+            <span class="project-title">Flask AKS Demo</span>
+            <span class="project-badge">devops</span>
+          </div>
+          <p class="project-desc">
+            Built, containerised, deployed and automated a Flask application using
+            modern DevOps practices — Docker, Kubernetes (AKS), and a full CI/CD
+            pipeline. The end-to-end project that ties everything together.
+          </p>
+          <a href="https://github.com/elliopsys/flask-aks-demo" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--teal-strong);text-decoration:none;margin-top:0.5rem;">
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            View on GitHub
+          </a>
+        </div>
+
+        <div class="project-card">
+          <div class="project-top">
+            <span class="project-title">Flask Portfolio</span>
+            <span class="project-badge">flask · python</span>
+          </div>
+          <p class="project-desc">
+            A personal portfolio website built with Python and Flask — the
+            foundation this site is built on. Demonstrates routing, templating,
+            and deploying a Python web app.
+          </p>
+          <a href="https://github.com/elliopsys/flask-portfolio" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--teal-strong);text-decoration:none;margin-top:0.5rem;">
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            View on GitHub
+          </a>
+        </div>
+
+        <div class="project-card">
+          <div class="project-top">
+            <span class="project-title">eShopOnWeb — AZ-400 Lab</span>
+            <span class="project-badge">azure · .net</span>
+          </div>
+          <p class="project-desc">
+            Forked as part of the AZ-400 DevOps Engineer certification course.
+            An ASP.NET Core 8.0 reference application used to practise Azure
+            DevOps pipelines, release management, and cloud deployment patterns.
+          </p>
+          <a href="https://github.com/elliopsys/eShopOnWeb" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--teal-strong);text-decoration:none;margin-top:0.5rem;">
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            View on GitHub
+          </a>
+        </div>
+
+        <!-- ✏️ Add more project cards here as you build things -->
+
+      </div>
+    </div>
+
+    <footer>
+      <span class="footer-note">elli · devops engineer</span>
+      <span class="footer-note">built &amp; deployed with flask + azure devops</span>
+    </footer>
+
+  </div>
+</body>
+</html>
